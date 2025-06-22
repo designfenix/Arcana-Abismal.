@@ -3,6 +3,69 @@ body {
 	padding: 0;
 }
 
+/* Contenedor principal para el fondo (puede ser body o un div.fullscreen) */
+.fullscreen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background:
+    /* 1. Imagen base */
+    url('assets/images/background.png') center/cover no-repeat,
+    /* 2. Gradiente radial para foco central */
+    radial-gradient(
+      circle at center,
+      rgba(200,30,30,0.2) 0%,
+      transparent 60%
+    ),
+    /* 3. Gradiente lineal para sombrear bordes */
+    radial-gradient(
+      circle at top left,
+      transparent,
+      rgba(0,0,0,0.6) 70%
+    ),
+    /* 4. Color sólido de fallback */
+    #100e0d;
+
+  /* Ajustes globales de contraste/brillo */
+  filter: brightness(0.9) contrast(1.1);
+  overflow: hidden;
+}
+
+/* Vignette oscuro con pseudo-elemento */
+.fullscreen::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 50%,
+    rgba(0,0,0,0.7) 100%
+  );
+}
+
+/* Ejemplo de box-shadow en un panel (cartas, HUD…) */
+.card, .panel {
+  background: rgba(17,17,17,0.8);
+  box-shadow:
+    /* sombra principal */
+    0 10px 30px rgba(0,0,0,0.7),
+    /* brillo interior */
+    inset 0 0 20px rgba(255,255,255,0.05);
+  border-radius: 8px;
+}
+
+/* Filtro de neblina sutil sobre toda la escena */
+.fullscreen::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: url('ruta/a/ruido-sutil.png') repeat;
+  opacity: 0.15;
+  mix-blend-mode: overlay;
+}
+
 // styles.scss
 $card-width: 100px;
 $card-height: 150px;
