@@ -1,0 +1,144 @@
+/* Variables de colores y tipografías */
+:root {
+  --bg: #0d0d0d;
+  --card-bg: #1e1e1e;
+  --text: #eee;
+  --accent: #9b59b6;
+  --font-title: 'Cinzel', serif;
+  --font-body: 'Merriweather', serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+/* Encabezado con título e iconos */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  text-shadow: 0 0 6px var(--accent);
+}
+.title {
+  font-family: var(--font-title);
+  font-size: 2rem;
+  margin: 0;
+}
+.relics {
+  display: flex;
+  gap: 1rem;
+}
+.relic {
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 0 10px var(--accent);
+}
+/* Sol y luna con pseudo-elementos */
+.relic--sun::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: radial-gradient(circle,var(--text),var(--accent));
+}
+.relic--moon::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at top,var(--text),var(--accent));
+  box-shadow: -4px 0 0 2px var(--bg);
+}
+
+/* Área principal con perspectiva 3D */
+.board {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  perspective: 800px;
+}
+.table {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  transform: rotateX(20deg);
+  transform-style: preserve-3d;
+}
+.hand {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Estilos de las cartas */
+.card {
+  width: 100px;
+  height: 140px;
+  background: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.6), 0 0 12px var(--accent);
+  filter: drop-shadow(0 0 4px var(--accent));
+  position: relative;
+  transform: rotateY(-15deg);
+  transition: transform 0.3s;
+}
+.card:hover {
+  transform: translateY(-10px) rotateY(0);
+}
+/* Valor de la carta */
+.card::before {
+  content: attr(data-value);
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  font-weight: bold;
+}
+/* Marco decorativo */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  pointer-events: none;
+  box-shadow: inset 0 0 8px var(--accent);
+}
+/* Carta activa */
+.card.active {
+  animation: glow 1s infinite alternate;
+}
+@keyframes glow {
+  from { box-shadow: 0 0 12px var(--accent); }
+  to { box-shadow: 0 0 20px var(--accent); }
+}
+
+/* Pie de página */
+.footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.8rem;
+}
+
+/* Media queries para responsividad */
+@media (max-width: 600px) {
+  .title { font-size: 1.5rem; }
+  .card { width: 80px; height: 110px; }
+}
+@media (min-width: 601px) and (max-width: 1024px) {
+  .title { font-size: 1.8rem; }
+  .card { width: 90px; height: 130px; }
+}
