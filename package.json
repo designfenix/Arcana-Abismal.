@@ -2,8 +2,8 @@
   "name": "arcana-abismal",
   "version": "1.0.0",
   "scripts": {
-    "build": "sass src/styles.scss src/styles.css"
-    "start": "live-server --port 8080"
+    "build": "sass src/styles.scss src/styles.css",
+    "start": "live-server --port 8181"
   },
   "devDependencies": {
     "live-server": "^1.2.2",
