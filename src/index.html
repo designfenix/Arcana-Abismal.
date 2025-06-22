@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roguelike Card Game</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="game-board">
+    <div class="deck deck--left">
+      <div class="card-back"></div>
+      <span class="deck-count discard-count">0</span>
+    </div>
+
+    <div class="objectives"></div>
+
+    <div class="table"></div>
+
+    <div class="deck deck--right">
+      <div class="card-back"></div>
+      <span class="deck-count draw-count">0</span>
+    </div>
+
+    <div class="scoreboard">
+      <span class="score-current">0</span>
+      <span class="score-separator">/</span>
+      <span class="score-goal">0</span>
+      <span class="score-coins">0 🪙</span>
+    </div>
+
+    <div class="hand"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

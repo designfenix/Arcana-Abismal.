@@ -1,0 +1,64 @@
+$card-width: 100px;
+$card-height: 150px;
+$gutter: 50px;
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 6px 2px rgba(255, 255, 0, 0.6);
+  }
+  to {
+    box-shadow: 0 0 12px 4px rgba(255, 255, 0, 0.8);
+  }
+}
+
+.card {
+  --px: 12px;
+  --card-w: calc(var(--px) * 16);
+  --card-h: calc(var(--px) * 20);
+  width: var(--card-w);
+  height: var(--card-h);
+  background: #fff;
+  border: calc(var(--px) * 0.25) solid #000;
+  border-radius: calc(var(--px) * 1);
+  position: relative;
+  overflow: hidden;
+  image-rendering: pixelated;
+
+  &::before {
+    content: attr(data-value);
+    position: absolute;
+    top: var(--px);
+    left: var(--px);
+    font: bold calc(var(--px) * 2) monospace;
+    color: #000;
+    line-height: 1;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top: calc(50% - var(--px) * 3);
+    left: calc(50% - var(--px) * 2);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+}
+
+// suits backgrounds truncated due to size
+
+.game-board {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-color: #2e0e0e;
+  padding: $gutter;
+  box-sizing: border-box;
+}
