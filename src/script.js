@@ -404,17 +404,27 @@ function shuffle(a) {
 }
 
 class RoguelikeCardGame {
-	constructor({
-		deckType = "spanish",
-		tableSize = 4,
-		handSize = 4,
-		objectivesCount = 4
-	}) {
-		this.deckType = deckType;
-		this.tableSize = tableSize;
-		this.handSize = handSize;
-		this.objectivesCount = objectivesCount;
-	}
+        constructor({
+                deckType = "spanish",
+                tableSize = 4,
+                handSize = 4,
+                objectivesCount = 4
+        }) {
+                this.deckType = deckType;
+                this.tableSize = tableSize;
+                this.handSize = handSize;
+                this.objectivesCount = objectivesCount;
+                this.sins = [
+                        "Soberbia",
+                        "Avaricia",
+                        "Lujuria",
+                        "Envidia",
+                        "Gula",
+                        "Ira",
+                        "Pereza"
+                ];
+                this.sinIndex = 0;
+        }
 
 	initDeck() {
 		const suits =
@@ -441,12 +451,13 @@ class RoguelikeCardGame {
 		this.gold = 0;
 	}
 
-	startRun() {
-		this.initDeck();
-		this.initObjectives();
-		this.draw(this.handSize);
-		this.checkObjectives();
-	}
+        startRun() {
+                this.initDeck();
+                this.initObjectives();
+                this.draw(this.handSize);
+                this.checkObjectives();
+                this.applyLevelEffects();
+        }
 
 	draw(n = 1) {
 		while (n-- > 0) {
@@ -483,18 +494,85 @@ class RoguelikeCardGame {
 		if (this.completedThisLevel >= this.toComplete) this.nextLevel();
 	}
 
-	checkObjectives() {
-		this.activeObjectives.forEach((o) => {
-			o.isValid = o.validate(this.table);
-		});
-	}
+        checkObjectives() {
+                this.activeObjectives.forEach((o) => {
+                        o.isValid = o.validate(this.table);
+                });
+        }
 
-	nextLevel() {
-		this.currentLevel++;
-		this.toComplete = this.currentLevel;
-		this.completedThisLevel = 0;
-		console.log(`¡Avanzas al nivel ${this.currentLevel}!`);
-	}
+        applyLevelEffects() {
+                const sin = this.sins[this.sinIndex];
+                this.applyRandomCurse(sin);
+                this.triggerNarrativeEvent(sin);
+        }
+
+        applyRandomCurse(sin) {
+                const curses = {
+                        Soberbia: [() => {
+                                this.toComplete++;
+                                console.log("La soberbia aumenta tus objetivos");
+                        }],
+                        Avaricia: [() => {
+                                this.gold = Math.max(0, this.gold - 5);
+                                console.log("La avaricia te roba 5 monedas");
+                        }],
+                        Lujuria: [() => {
+                                this.draw(1);
+                                console.log("La lujuria te tienta a robar una carta extra");
+                        }],
+                        Envidia: [() => {
+                                if (this.hand.length) {
+                                        this.discard.push(this.hand.pop());
+                                        console.log("La envidia se lleva tu "+
+                                                "última carta");
+                                }
+                        }],
+                        Gula: [() => {
+                                this.deck.splice(0, 1);
+                                console.log("La gula consume una carta de tu mazo");
+                        }],
+                        Ira: [() => {
+                                if (this.table.length) {
+                                        const i = Math.floor(Math.random() * this.table.length);
+                                        this.discard.push(this.table[i]);
+                                        this.table[i] = this.deck.pop();
+                                        console.log("La ira destruye una carta de la mesa");
+                                }
+                        }],
+                        Pereza: [() => {
+                                this.toComplete++;
+                                console.log("La pereza retrasa tu avance");
+                        }]
+                };
+                const pool = curses[sin] || [];
+                if (pool.length) pool[Math.floor(Math.random() * pool.length)]();
+        }
+
+        triggerNarrativeEvent(sin) {
+                const choice = confirm(`Te enfrentas a ${sin}. ¿Aceptar la tentación?`);
+                if (choice) {
+                        this.gold += 2;
+                        console.log("Ganas 2 monedas por tu decisión");
+                } else {
+                        if (this.deck.length) {
+                                this.discard.push(this.deck.pop());
+                                console.log("Pierdes una carta por resistirte");
+                        }
+                }
+        }
+
+        nextLevel() {
+                this.currentLevel++;
+                this.sinIndex++;
+                this.toComplete = this.currentLevel;
+                this.completedThisLevel = 0;
+                if (this.sinIndex >= this.sins.length) {
+                        alert("Has derrotado todos los pecados. ¡Victoria!");
+                        return;
+                }
+                console.log(`¡Avanzas al nivel ${this.currentLevel} - ${this.sins[this.sinIndex]}!`);
+                this.applyLevelEffects();
+        }
 
 	formatCard(c) {
 		return `${c.value} de ${c.suit}`;
@@ -523,20 +601,23 @@ const game = new RoguelikeCardGame({ deckType: "spanish" });
 // Para jugar: game.placeCard(handIndex, tableIndex);
 
 document.addEventListener("DOMContentLoaded", () => {
-	const game = new RoguelikeCardGame({ deckType: "spanish" });
-	const objContainer = document.querySelector(".objectives");
-	const tableContainer = document.querySelector(".table");
-	const handContainer = document.querySelector(".hand");
-	const scoreCur = document.querySelector(".score-current");
-	const scoreGoal = document.querySelector(".score-goal");
-	const scoreCoins = document.querySelector(".score-coins > span");
-	const discardCount = document.querySelector(".discard-count");
-	const drawCount = document.querySelector(".draw-count");
-	let selectedHandIdx = null;
+        const game = new RoguelikeCardGame({ deckType: "spanish" });
+        const objContainer = document.querySelector(".objectives");
+        const tableContainer = document.querySelector(".table");
+        const handContainer = document.querySelector(".hand");
+        const scoreCur = document.querySelector(".score-current");
+        const scoreGoal = document.querySelector(".score-goal");
+        const scoreCoins = document.querySelector(".score-coins > span");
+        const discardCount = document.querySelector(".discard-count");
+        const drawCount = document.querySelector(".draw-count");
+        const intro = document.getElementById("intro-screen");
+        const playBtn = document.getElementById("play-btn");
+        const board = document.querySelector(".game-board");
+        let selectedHandIdx = null;
 
 	function render() {
 		// marcador
-		scoreCur.textContent = game.currentLevel;
+                scoreCur.textContent = `${game.currentLevel} - ${game.sins[game.sinIndex]}`;
 		scoreGoal.textContent = game.toComplete;
 		scoreCoins.textContent = `${game.gold}`;
 		discardCount.textContent = game.discard.length;
@@ -618,6 +699,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		render();
 	});
 
-	game.startRun();
-	render();
+        playBtn.addEventListener("click", () => {
+                intro.style.display = "none";
+                board.classList.remove("hidden");
+                game.startRun();
+                render();
+        });
 });

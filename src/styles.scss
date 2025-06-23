@@ -3,6 +3,24 @@ body {
 	padding: 0;
 }
 
+.hidden {
+  display: none;
+}
+
+.intro-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  gap: 1rem;
+  font: bold 24px sans-serif;
+  z-index: 1000;
+}
+
 /* Contenedor principal para el fondo (puede ser body o un div.fullscreen) */
 .fullscreen {
   position: relative;
