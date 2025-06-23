@@ -7,7 +7,7 @@ body {
 .fullscreen {
   position: relative;
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
   background:
     /* 1. Imagen base */
     url('assets/images/background.png') center/cover no-repeat,
@@ -139,47 +139,35 @@ $gutter: 50px;
 	}
 }
 .game-board {
-	position: relative;
-	width: 100vw;
-	height: 100vh;
-	/*background-color: #2e0e0e;
-	background: radial-gradient(
-			circle,
-			transparent 20%,
-			#2e0e0e 20%,
-			#2e0e0e 80%,
-			transparent 80%,
-			transparent
-		),
-		radial-gradient(
-				circle,
-				transparent 20%,
-				#2e0e0e 20%,
-				#2e0e0e 80%,
-				transparent 80%,
-				transparent
-			)
-			25px 25px,
-		linear-gradient(#5a1f1f 2px, transparent 2px) 0 -1px,
-		linear-gradient(90deg, #5a1f1f 2px, #2e0e0e 2px) -1px 0;
-	background-size: 50px 50px, 50px 50px, 25px 25px, 25px 25px;*/
-	padding: $gutter;
-	box-sizing: border-box;
+        display: grid;
+        width: 100%;
+        height: 100vh;
+        grid-template-columns: auto 1fr auto;
+        grid-template-rows: auto auto 1fr auto;
+        grid-template-areas:
+                "scoreboard scoreboard scoreboard"
+                "objectives objectives objectives"
+                "left table right"
+                "hand hand hand";
+        gap: $gutter;
+        padding: $gutter;
+        box-sizing: border-box;
 
-	.deck {
-		position: absolute;
-		top: $gutter;
-		&--left {
-			left: $gutter;
-		}
-		&--right {
-			right: $gutter;
-		}
-		.deck-count {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
+        .deck {
+                position: relative;
+                align-self: start;
+                justify-self: center;
+                &--left {
+                        grid-area: left;
+                }
+                &--right {
+                        grid-area: right;
+                }
+                .deck-count {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
 			background: rgba(0, 0, 0, 0.6);
 			color: #fff;
 			font-size: 14px;
@@ -204,16 +192,15 @@ $gutter: 50px;
 			background-size: 10px 10px;
 			border-radius: 8px;
 			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-		}
-	}
+                }
+        }
 
-	.objectives {
-		position: absolute;
-		top: $gutter;
-		left: 50%;
-		transform: translateX(-50%);
-		display: flex;
-		gap: $gutter;
+        .objectives {
+                grid-area: objectives;
+                justify-self: center;
+                display: flex;
+                justify-content: center;
+                gap: $gutter;
 
 		.objective-card {
 			image-rendering: pixelated;
@@ -240,14 +227,13 @@ $gutter: 50px;
 		}
 	}
 
-	.table {
-		position: absolute;
-		top: 40%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		display: grid;
-		grid-template-columns: repeat(4, $card-width);
-		gap: $gutter;
+        .table {
+                grid-area: table;
+                justify-self: center;
+                align-self: center;
+                display: grid;
+                grid-template-columns: repeat(4, $card-width);
+                gap: $gutter;
     background: url('assets/images/table_texture.png') center/cover no-repeat;
     /* La máscara funde los bordes con transparencia */
     -webkit-mask-image: radial-gradient(
@@ -287,17 +273,15 @@ $gutter: 50px;
 		}
 	}
 
-	.scoreboard {
-		position: absolute;
-		top: 16px;
-		right: 50%;
-		transform: translateX(50%);
-		color: #fff;
-		font-size: 24px;
-		text-align: center;
-		line-height: 1;
-		image-rendering: pixelated;
-		font: bold 16px monospace;
+        .scoreboard {
+                grid-area: scoreboard;
+                justify-self: center;
+                color: #fff;
+                font-size: 24px;
+                text-align: center;
+                line-height: 1;
+                image-rendering: pixelated;
+                font: bold 16px monospace;
 
 		.score-current,
 		.score-separator,
@@ -318,16 +302,14 @@ $gutter: 50px;
 		}
 	}
 
-	.hand {
-		position: absolute;
-		bottom: $gutter;
-		left: 50%;
-		transform: translateX(-50%);
-		display: flex;
-		gap: $gutter;
-		padding: $gutter;
-		background: rgba(0, 0, 0, 0.3);
-		border-radius: 8px;
+        .hand {
+                grid-area: hand;
+                justify-self: center;
+                display: flex;
+                gap: $gutter;
+                padding: $gutter;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
 
 		.hand-card {
 			width: $card-width;
