@@ -67,8 +67,8 @@ body {
 }
 
 // styles.scss
-$card-width: 100px;
-$card-height: 150px;
+$card-width: 150px;
+$card-height: 250px;
 $gutter: 50px;
 
 @keyframes glow {
@@ -80,24 +80,25 @@ $gutter: 50px;
 	}
 }
 .card {
-	--px: 12px; // tamaño de un “píxel” CSS
+	--px: 25px; // tamaño de un “píxel” CSS
 	--card-w: calc(var(--px) * 16);
 	--card-h: calc(var(--px) * 20);
 	width: var(--card-w);
 	height: var(--card-h);
-	background: #fff;
 	border: calc(var(--px) * 0.25) solid #000;
 	border-radius: calc(var(--px) * 1);
 	position: relative;
 	overflow: hidden;
 	image-rendering: pixelated;
+  background: url('assets/images/blank_card_full.png') center/cover no-repeat;
+  overflow: hidden;
 
 	// 1) Valor numérico arriba-izquierda
 	&::before {
 		content: attr(data-value);
 		position: absolute;
-		top: var(--px);
-		left: var(--px);
+		top: 20px;
+		left: 20px;
 		font: bold calc(var(--px) * 2) monospace;
 		color: #000;
 		line-height: 1;
@@ -109,8 +110,8 @@ $gutter: 50px;
 		position: absolute;
 		width: 50%;
 		height: 50%;
-		top: calc(50% - var(--px) * 3);
-		left: calc(50% - var(--px) * 2);
+		top: calc(50% - 50px);
+    left: calc(50% - 36px);
 		background-repeat: no-repeat;
 		background-position: center;
 		background-size: contain;
@@ -247,11 +248,24 @@ $gutter: 50px;
 		display: grid;
 		grid-template-columns: repeat(4, $card-width);
 		gap: $gutter;
+    background: url('assets/images/table_texture.png') center/cover no-repeat;
+    /* La máscara funde los bordes con transparencia */
+    -webkit-mask-image: radial-gradient(
+      ellipse at center,
+      black 60%,
+      transparent 100%
+    );
+            mask-image: radial-gradient(
+      ellipse at center,
+      black 60%,
+      transparent 100%
+    );
+    
 
 		.table-card {
 			width: $card-width;
 			height: $card-height;
-			background: #fff url("/path/to/card-front-placeholder.png") no-repeat
+			background: url('assets/images/blank_card_full.png') no-repeat
 				center/cover;
 			border-radius: 6px;
 			box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
@@ -260,6 +274,7 @@ $gutter: 50px;
 			justify-content: center;
 			flex-wrap: wrap;
 			transition: box-shadow, transform 0.2s;
+      
 
 			&.can-drop {
 				box-shadow: 0 0 8px 2px #00ff00;
@@ -291,11 +306,15 @@ $gutter: 50px;
 			min-width: 24px;
 		}
 		.score-coins {
-			display: block;
-			font-size: 16px;
-			margin-top: 8px;
-			text-transform: uppercase;
-			opacity: 0.8;
+			display: flex;
+      font-size: 64px;
+      margin-top: 8px;
+      text-transform: uppercase;
+      opacity: 1;
+      align-items: center;
+      img{
+        max-width:64px;
+      }
 		}
 	}
 

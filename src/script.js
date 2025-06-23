@@ -529,7 +529,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	const handContainer = document.querySelector(".hand");
 	const scoreCur = document.querySelector(".score-current");
 	const scoreGoal = document.querySelector(".score-goal");
-	const scoreCoins = document.querySelector(".score-coins");
+	const scoreCoins = document.querySelector(".score-coins > span");
 	const discardCount = document.querySelector(".discard-count");
 	const drawCount = document.querySelector(".draw-count");
 	let selectedHandIdx = null;
@@ -538,7 +538,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		// marcador
 		scoreCur.textContent = game.currentLevel;
 		scoreGoal.textContent = game.toComplete;
-		scoreCoins.textContent = `${game.gold} 🪙`;
+		scoreCoins.textContent = `${game.gold}`;
 		discardCount.textContent = game.discard.length;
 		drawCount.textContent = game.deck.length;
 
