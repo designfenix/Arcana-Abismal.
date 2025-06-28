@@ -301,12 +301,26 @@ $gutter: 50px;
                 image-rendering: pixelated;
                 font: bold 16px monospace;
 
-		.score-current,
-		.score-separator,
-		.score-goal {
-			display: inline-block;
-			min-width: 24px;
-		}
+                .score-sin {
+                        display: block;
+                        font-size: 32px;
+                        margin-bottom: 4px;
+                        text-transform: uppercase;
+                }
+
+                .score-progress {
+                        display: flex;
+                        justify-content: center;
+                        gap: 4px;
+                        margin-bottom: 4px;
+                }
+
+                .score-current,
+                .score-separator,
+                .score-goal {
+                        display: inline-block;
+                        min-width: 24px;
+                }
 		.score-coins {
 			display: flex;
       font-size: 64px;
