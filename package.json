@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "scripts": {
     "build": "sass src/styles.scss src/styles.css",
-    "start": "live-server src --port=8181"
+    "watch:scss": "sass --watch src/styles.scss:src/styles.css",
+    "serve": "live-server src --port=8181",
+    "start": "concurrently \"npm run watch:scss\" \"npm run serve\""
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "live-server": "^1.2.2",
     "sass": "^1.63.6"
   }
