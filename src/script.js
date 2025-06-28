@@ -424,6 +424,9 @@ class RoguelikeCardGame {
                         "Pereza"
                 ];
                 this.sinIndex = 0;
+                // objetivos necesarios para el primer pecado y aumento por nivel
+                this.baseObjectives = 4;
+                this.incrementObjectives = 2;
         }
 
 	initDeck() {
@@ -442,14 +445,15 @@ class RoguelikeCardGame {
 		this.hand = [];
 	}
 
-	initObjectives() {
-		this.objectivesDeck = shuffle([...objectives]);
-		this.activeObjectives = this.objectivesDeck.splice(0, this.objectivesCount);
-		this.currentLevel = 1;
-		this.completedThisLevel = 0;
-		this.toComplete = this.currentLevel;
-		this.gold = 0;
-	}
+        initObjectives() {
+                this.objectivesDeck = shuffle([...objectives]);
+                this.activeObjectives = this.objectivesDeck.splice(0, this.objectivesCount);
+                this.currentLevel = 1;
+                this.completedThisLevel = 0;
+                // número de objetivos a completar para el primer pecado
+                this.toComplete = this.baseObjectives;
+                this.gold = 0;
+        }
 
         startRun() {
                 this.initDeck();
@@ -564,7 +568,8 @@ class RoguelikeCardGame {
         nextLevel() {
                 this.currentLevel++;
                 this.sinIndex++;
-                this.toComplete = this.currentLevel;
+                // cada nuevo pecado requiere dos objetivos más
+                this.toComplete += this.incrementObjectives;
                 this.completedThisLevel = 0;
                 if (this.sinIndex >= this.sins.length) {
                         alert("Has derrotado todos los pecados. ¡Victoria!");
@@ -605,6 +610,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const objContainer = document.querySelector(".objectives");
         const tableContainer = document.querySelector(".table");
         const handContainer = document.querySelector(".hand");
+        const scoreSin = document.querySelector(".score-sin");
         const scoreCur = document.querySelector(".score-current");
         const scoreGoal = document.querySelector(".score-goal");
         const scoreCoins = document.querySelector(".score-coins > span");
@@ -615,13 +621,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const board = document.querySelector(".game-board");
         let selectedHandIdx = null;
 
-	function render() {
-		// marcador
-                scoreCur.textContent = `${game.currentLevel} - ${game.sins[game.sinIndex]}`;
-		scoreGoal.textContent = game.toComplete;
-		scoreCoins.textContent = `${game.gold}`;
-		discardCount.textContent = game.discard.length;
-		drawCount.textContent = game.deck.length;
+        function render() {
+                // marcador
+                scoreSin.textContent = game.sins[game.sinIndex];
+                scoreCur.textContent = game.completedThisLevel;
+                scoreGoal.textContent = game.toComplete;
+                scoreCoins.textContent = `${game.gold}`;
+                discardCount.textContent = game.discard.length;
+                drawCount.textContent = game.deck.length;
 
 		// misiones
 		objContainer.innerHTML = "";
