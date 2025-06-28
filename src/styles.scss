@@ -111,6 +111,74 @@ body {
 	}
 }
 
+.transition-screen {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: #fff;
+        gap: 1rem;
+        z-index: 1000;
+
+        h2 {
+                font-family: 'Cinzel', serif;
+                font-size: 4rem;
+                margin: 0;
+        }
+
+        p {
+                max-width: 600px;
+        }
+
+        $btn-frame: 'assets/images/button_frame.png';
+        $noise: 'assets/images/texture_noise.png';
+        $gold-light: #f1e0a3;
+
+        .btn-play {
+                position: relative;
+                display: inline-block;
+                padding: 0.8rem 2rem;
+                font-family: 'Cinzel', serif;
+                font-size: 1.5rem;
+                text-transform: uppercase;
+                letter-spacing: 1.5px;
+                color: $gold-light;
+                background: url(#{$btn-frame});
+                border-radius: 8px;
+                box-shadow:
+                        0 4px 10px rgba(0, 0, 0, 0.5),
+                        inset 0 0 8px rgba($gold-light, 0.2);
+                overflow: hidden;
+                cursor: pointer;
+                transition: all 0.2s ease;
+
+                &::after {
+                        content: '';
+                        position: absolute;
+                        inset: 0;
+                        background: url(#{$noise}) repeat;
+                        opacity: 0.05;
+                        mix-blend-mode: multiply;
+                        pointer-events: none;
+                }
+
+                &:hover {
+                        transform: translateY(-2px);
+                        box-shadow:
+                                0 6px 14px rgba(0, 0, 0, 0.7),
+                                inset 0 0 12px rgba($gold-light, 0.3);
+                }
+
+                @media (max-width: 600px) {
+                        font-size: 1.2rem;
+                        padding: 0.6rem 1.5rem;
+                }
+        }
+}
+
 .fullscreen {
   position: relative;
   width: 100%;

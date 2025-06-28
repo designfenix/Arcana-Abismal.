@@ -12,6 +12,12 @@
     <button id="play-btn" class="btn-play">Jugar</button>
   </div>
 
+  <div id="transition-screen" class="transition-screen hidden">
+    <h2 class="sin-title"></h2>
+    <p class="sin-description"></p>
+    <button id="continue-btn" class="btn-play">Continuar</button>
+  </div>
+
   <div class="game-board hidden">
     <div class="deck deck--left">
       <div class="card-back"></div>
@@ -40,6 +46,7 @@
     <div class="hand"></div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

@@ -396,12 +396,29 @@ const objectives = ruleTemplates.map((t) => {
 });
 
 function shuffle(a) {
-	for (let i = a.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[a[i], a[j]] = [a[j], a[i]];
-	}
-	return a;
+        for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
 }
+
+const sinDescriptions = {
+        Soberbia:
+                "Crees que nada puede derrotarte, pero la soberbia siempre tiene un precio.",
+        Avaricia:
+                "El deseo de poseerlo todo nubla tu juicio y corrompe tus cartas.",
+        Lujuria:
+                "Pasiones desmedidas se interponen entre tú y la victoria.",
+        Envidia:
+                "Anhelas lo que no tienes, perdiendo de vista tu propio poder.",
+        Gula:
+                "Nunca es suficiente; siempre quieres una carta más.",
+        Ira:
+                "La furia te consume y desordena tu estrategia.",
+        Pereza:
+                "La desgana hace más arduo tu camino hacia el abismo."
+};
 
 class RoguelikeCardGame {
         constructor({
@@ -427,6 +444,7 @@ class RoguelikeCardGame {
                 // objetivos necesarios para el primer pecado y aumento por nivel
                 this.baseObjectives = 4;
                 this.incrementObjectives = 2;
+                this.pendingSinTransition = false;
         }
 
 	initDeck() {
@@ -460,7 +478,7 @@ class RoguelikeCardGame {
                 this.initObjectives();
                 this.draw(this.handSize);
                 this.checkObjectives();
-                this.applyLevelEffects();
+                this.pendingSinTransition = true;
         }
 
 	draw(n = 1) {
@@ -507,7 +525,6 @@ class RoguelikeCardGame {
         applyLevelEffects() {
                 const sin = this.sins[this.sinIndex];
                 this.applyRandomCurse(sin);
-                this.triggerNarrativeEvent(sin);
         }
 
         applyRandomCurse(sin) {
@@ -552,18 +569,7 @@ class RoguelikeCardGame {
                 if (pool.length) pool[Math.floor(Math.random() * pool.length)]();
         }
 
-        triggerNarrativeEvent(sin) {
-                const choice = confirm(`Te enfrentas a ${sin}. ¿Aceptar la tentación?`);
-                if (choice) {
-                        this.gold += 2;
-                        console.log("Ganas 2 monedas por tu decisión");
-                } else {
-                        if (this.deck.length) {
-                                this.discard.push(this.deck.pop());
-                                console.log("Pierdes una carta por resistirte");
-                        }
-                }
-        }
+        triggerNarrativeEvent(_) {}
 
         nextLevel() {
                 this.currentLevel++;
@@ -576,7 +582,7 @@ class RoguelikeCardGame {
                         return;
                 }
                 console.log(`¡Avanzas al nivel ${this.currentLevel} - ${this.sins[this.sinIndex]}!`);
-                this.applyLevelEffects();
+                this.pendingSinTransition = true;
         }
 
 	formatCard(c) {
@@ -619,7 +625,47 @@ document.addEventListener("DOMContentLoaded", () => {
         const intro = document.getElementById("intro-screen");
         const playBtn = document.getElementById("play-btn");
         const board = document.querySelector(".game-board");
+        const transition = document.getElementById("transition-screen");
+        const sinTitle = transition.querySelector(".sin-title");
+        const sinDesc = transition.querySelector(".sin-description");
+        const continueBtn = document.getElementById("continue-btn");
         let selectedHandIdx = null;
+
+        function showSinTransition(sin) {
+                return new Promise((resolve) => {
+                        sinTitle.textContent = sin;
+                        sinDesc.textContent = sinDescriptions[sin] || "";
+                        transition.classList.remove("hidden");
+                        gsap.fromTo(
+                                transition,
+                                { y: 100, opacity: 0 },
+                                { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }
+                        );
+                        continueBtn.onclick = () => {
+                                gsap.to(transition, {
+                                        y: -100,
+                                        opacity: 0,
+                                        duration: 0.5,
+                                        ease: "power2.in",
+                                        onComplete: () => {
+                                                transition.classList.add("hidden");
+                                                resolve();
+                                        }
+                                });
+                        };
+                });
+        }
+
+        function checkTransition() {
+                if (game.pendingSinTransition) {
+                        game.pendingSinTransition = false;
+                        showSinTransition(game.sins[game.sinIndex]).then(() => {
+                                game.applyLevelEffects();
+                                game.checkObjectives();
+                                render();
+                        });
+                }
+        }
 
         function render() {
                 // marcador
@@ -698,18 +744,20 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	// completar misión con clic
-	objContainer.addEventListener("click", (e) => {
-		const o = e.target.closest(".objective-card");
-		if (!o || !o.classList.contains("active")) return;
-		game.completeObjective(+o.dataset.index);
-		game.checkObjectives(); // recalcula validez
-		render();
-	});
+        objContainer.addEventListener("click", (e) => {
+                const o = e.target.closest(".objective-card");
+                if (!o || !o.classList.contains("active")) return;
+                game.completeObjective(+o.dataset.index);
+                game.checkObjectives(); // recalcula validez
+                render();
+                checkTransition();
+        });
 
         playBtn.addEventListener("click", () => {
                 intro.style.display = "none";
                 board.classList.remove("hidden");
                 game.startRun();
                 render();
+                checkTransition();
         });
 });
