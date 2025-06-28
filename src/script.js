@@ -631,6 +631,89 @@ document.addEventListener("DOMContentLoaded", () => {
         const continueBtn = document.getElementById("continue-btn");
         let selectedHandIdx = null;
 
+        function animateCounter(elem, from, to) {
+                const obj = { val: from };
+                return gsap.to(obj, {
+                        val: to,
+                        duration: 0.3,
+                        onUpdate: () => {
+                                elem.textContent = Math.round(obj.val);
+                        }
+                });
+        }
+
+        function dealInitialCards() {
+                return new Promise((resolve) => {
+                        tableContainer.innerHTML = "";
+                        handContainer.innerHTML = "";
+                        objContainer.innerHTML = "";
+
+                        let counter = game.deck.length + game.table.length + game.hand.length;
+                        drawCount.textContent = counter;
+
+                        const tl = gsap.timeline({ onComplete: () => {
+                                drawCount.textContent = game.deck.length;
+                                resolve();
+                        }});
+
+                        game.table.forEach((c) => {
+                                const d = document.createElement("div");
+                                d.className = "table-card card";
+                                d.dataset.suit = c.suit;
+                                d.dataset.value = c.value;
+                                d.style.opacity = 0;
+                                d.style.transform = "scale(0)";
+                                tableContainer.appendChild(d);
+                                tl.to(d, {
+                                        scale: 1,
+                                        opacity: 1,
+                                        duration: 0.3,
+                                        ease: "back.out(1.7)",
+                                        onStart: () => {
+                                                counter--;
+                                                animateCounter(drawCount, counter + 1, counter);
+                                        }
+                                });
+                        });
+
+                        game.hand.forEach((c) => {
+                                const d = document.createElement("div");
+                                d.className = "hand-card card";
+                                d.dataset.suit = c.suit;
+                                d.dataset.value = c.value;
+                                d.style.opacity = 0;
+                                d.style.transform = "scale(0)";
+                                handContainer.appendChild(d);
+                                tl.to(d, {
+                                        scale: 1,
+                                        opacity: 1,
+                                        duration: 0.3,
+                                        ease: "back.out(1.7)",
+                                        onStart: () => {
+                                                counter--;
+                                                animateCounter(drawCount, counter + 1, counter);
+                                        }
+                                });
+                        });
+
+                        game.activeObjectives.forEach((o, i) => {
+                                const d = document.createElement("div");
+                                d.className = "objective-card";
+                                d.dataset.index = i;
+                                d.innerHTML = `<p>${o.objective}</p><span>${o.coins} 🪙</span>`;
+                                d.style.opacity = 0;
+                                d.style.transform = "scale(0)";
+                                objContainer.appendChild(d);
+                                tl.to(d, {
+                                        scale: 1,
+                                        opacity: 1,
+                                        duration: 0.3,
+                                        ease: "back.out(1.7)"
+                                });
+                        });
+                });
+        }
+
         function showSinTransition(sin) {
                 return new Promise((resolve) => {
                         sinTitle.textContent = sin;
@@ -642,6 +725,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }
                         );
                         continueBtn.onclick = () => {
+                                board.classList.add("hidden");
                                 gsap.to(transition, {
                                         y: -100,
                                         opacity: 0,
@@ -649,7 +733,10 @@ document.addEventListener("DOMContentLoaded", () => {
                                         ease: "power2.in",
                                         onComplete: () => {
                                                 transition.classList.add("hidden");
-                                                resolve();
+                                                game.applyLevelEffects();
+                                                game.checkObjectives();
+                                                board.classList.remove("hidden");
+                                                dealInitialCards().then(resolve);
                                         }
                                 });
                         };
@@ -660,8 +747,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (game.pendingSinTransition) {
                         game.pendingSinTransition = false;
                         showSinTransition(game.sins[game.sinIndex]).then(() => {
-                                game.applyLevelEffects();
-                                game.checkObjectives();
                                 render();
                         });
                 }
